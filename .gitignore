@@ -5,3 +5,5 @@ data/students/
 data/attendance/
 data/encodings.pickle
 .env
+checkencodings.py
+data/encodings.pkl
