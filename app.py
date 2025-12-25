@@ -1,6 +1,7 @@
 import streamlit as st
 from features.register import register_student
 from features.recognize import detect_faces, encode_faces
+from features.recognize import recognize_live
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -14,7 +15,7 @@ st.title("AI-Based Face Recognition Attendance System")
 # ---------------- MENU ----------------
 menu = st.selectbox(
     "Select Action",
-    ["Face Detection", "Register Student"]
+    ["Face Detection", "Register Student", "Live Face Recognition"]
 )
 
 # =========================
@@ -50,23 +51,8 @@ elif menu == "Register Student":
     if st.button("Generate Face Encodings"):
         count = encode_faces()
         st.success(f"{count} face embeddings generated successfully!")
+elif menu == "Live Face Recognition":
+    if st.button("Start Live Recognition"):
+        st.warning("Press Q to stop camera")
+        recognize_live()
 
-
-
-
-
-
-
-
-
-# Adding std name,reg etc to database after this
-# import streamlit as st
-# from features.recognize import detect_faces
-
-# st.set_page_config(page_title="AI Attendance System")
-
-# st.title("AI-Based Face Recognition Attendance System")
-
-# if st.button("Start Face Detection"):
-#     st.warning("Press Q to stop camera")
-#     detect_faces()

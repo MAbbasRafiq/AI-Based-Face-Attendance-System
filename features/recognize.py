@@ -4,6 +4,8 @@ from utils.camera import get_camera
 import os
 import pickle
 from deepface import DeepFace
+from utils.camera import get_camera        # for function 3
+from utils.helpers import find_best_match  # for function 3
 
 def detect_faces():
     face_cascade = cv2.CascadeClassifier(
@@ -78,3 +80,58 @@ def encode_faces():
         pickle.dump(data, f)
 
     return len(encodings)
+
+
+import cv2
+import pickle
+from deepface import DeepFace
+from utils.camera import get_camera
+
+def recognize_live():
+    with open("data/encodings.pkl", "rb") as f:
+        data = pickle.load(f)
+
+    known_encodings = data["encodings"]
+    known_names = data["names"]
+
+    cap = get_camera()
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        try:
+            results = DeepFace.find(
+                img_path=frame,
+                db_path="data/students",
+                model_name="Facenet",
+                enforce_detection=False
+            )
+
+            if len(results) > 0 and not results[0].empty:
+                identity = results[0].iloc[0]["identity"]
+                name = identity.split("\\")[-2]  # folder name
+            else:
+                name = "Unknown"
+
+        except Exception:
+            name = "Unknown"
+
+        cv2.putText(
+            frame,
+            name,
+            (30, 40),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0) if name != "Unknown" else (0, 0, 255),
+            2
+        )
+
+        cv2.imshow("Live Face Recognition", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
