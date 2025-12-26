@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # AI-Based Face Recognition Attendance System 🎓🤖
 
