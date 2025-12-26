@@ -6,6 +6,7 @@ import pickle
 from deepface import DeepFace
 from utils.camera import get_camera        # for function 3
 from utils.helpers import find_best_match  # for function 3
+from features.attendance import mark_attendance  # to import attendance helper function
 
 def detect_faces():
     face_cascade = cv2.CascadeClassifier(
@@ -82,18 +83,8 @@ def encode_faces():
     return len(encodings)
 
 
-import cv2
-import pickle
-from deepface import DeepFace
-from utils.camera import get_camera
 
-def recognize_live():
-    with open("data/encodings.pkl", "rb") as f:
-        data = pickle.load(f)
-
-    known_encodings = data["encodings"]
-    known_names = data["names"]
-
+def recognize_live(subject):
     cap = get_camera()
 
     while True:
@@ -111,13 +102,21 @@ def recognize_live():
 
             if len(results) > 0 and not results[0].empty:
                 identity = results[0].iloc[0]["identity"]
-                name = identity.split("\\")[-2]  # folder name
+                name = identity.split("\\")[-2]
+
+                # Mark attendance
+                marked = mark_attendance(name, subject)
+                status = "Marked" if marked else "Already Marked"
+
             else:
                 name = "Unknown"
+                status = ""
 
         except Exception:
             name = "Unknown"
+            status = ""
 
+        # Name on screen
         cv2.putText(
             frame,
             name,
@@ -127,6 +126,18 @@ def recognize_live():
             (0, 255, 0) if name != "Unknown" else (0, 0, 255),
             2
         )
+
+        # Attendance status on screen
+        if status:
+            cv2.putText(
+                frame,
+                status,
+                (30, 80),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (255, 255, 0),
+                2
+            )
 
         cv2.imshow("Live Face Recognition", frame)
 

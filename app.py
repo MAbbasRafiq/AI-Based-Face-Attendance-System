@@ -15,7 +15,9 @@ st.title("AI-Based Face Recognition Attendance System")
 # ---------------- MENU ----------------
 menu = st.selectbox(
     "Select Action",
-    ["Face Detection", "Register Student", "Live Face Recognition"]
+    ["Face Detection",
+     "Register Student",
+     "Live Face Recognition (Attendance)"]
 )
 
 # =========================
@@ -51,8 +53,14 @@ elif menu == "Register Student":
     if st.button("Generate Face Encodings"):
         count = encode_faces()
         st.success(f"{count} face embeddings generated successfully!")
-elif menu == "Live Face Recognition":
-    if st.button("Start Live Recognition"):
-        st.warning("Press Q to stop camera")
-        recognize_live()
+elif menu == "Live Face Recognition (Attendance)":
+    subject = st.text_input("Enter Subject Name")
+
+    if st.button("Start Attendance"):
+        if subject:
+            st.warning("Press Q to stop camera")
+            recognize_live(subject)
+        else:
+            st.error("Please enter subject name")
+
 
