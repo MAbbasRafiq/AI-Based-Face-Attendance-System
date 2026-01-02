@@ -2,6 +2,7 @@ import streamlit as st
 from features.register import register_student
 from features.recognize import detect_faces, encode_faces
 from features.recognize import recognize_live
+from features.dashboard import show_dashboard
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -17,7 +18,8 @@ menu = st.selectbox(
     "Select Action",
     ["Face Detection",
      "Register Student",
-     "Live Face Recognition (Attendance)"]
+     "Live Face Recognition (Attendance)",
+     "Dashboard (Teacher View)"]
 )
 
 # =========================
@@ -62,5 +64,7 @@ elif menu == "Live Face Recognition (Attendance)":
             recognize_live(subject)
         else:
             st.error("Please enter subject name")
+elif menu == "Dashboard (Teacher View)":
+    show_dashboard()
 
 
